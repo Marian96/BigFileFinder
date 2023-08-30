@@ -12,4 +12,6 @@
     <string name="files">Files</string>
     <string name="no_files_found">No files found</string>
     <string name="searching_in">Searching in %1$s</string>
+    <string name="search_notification_title">Search completed</string>
+    <string name="search_notification_description">Found %1$s files</string>
 </resources>

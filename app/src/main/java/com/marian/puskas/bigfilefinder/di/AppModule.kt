@@ -3,8 +3,11 @@ package com.marian.puskas.bigfilefinder.di
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.Resources
 import com.marian.puskas.bigfilefinder.common.notifications.NotificationProvider
 import com.marian.puskas.bigfilefinder.common.notifications.NotificationProviderImpl
+import com.marian.puskas.bigfilefinder.common.resources.ResourcesManager
+import com.marian.puskas.bigfilefinder.common.resources.ResourcesManagerImpl
 import com.marian.puskas.bigfilefinder.data.directories.DirectoriesRepositoryImpl
 import com.marian.puskas.bigfilefinder.domain.searchresults.directories.DirectoriesRepository
 import dagger.Module
@@ -37,5 +40,14 @@ object AppModule {
     @Provides
     @Singleton
     fun provideNotificationManager(): NotificationProvider = NotificationProviderImpl()
+
+    @Provides
+    @Singleton
+    @ForApplication
+    fun providesResources(application: Application): Resources = application.resources
+
+    @Provides
+    @Singleton
+    fun resourcesManager(@ForApplication context: Context, @ForApplication resources: Resources): ResourcesManager = ResourcesManagerImpl(resources, context)
 
 }

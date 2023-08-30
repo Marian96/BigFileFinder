@@ -6,8 +6,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.marian.puskas.bigfilefinder.R
 import com.marian.puskas.bigfilefinder.common.notifications.NotificationProvider
 import com.marian.puskas.bigfilefinder.common.notifications.model.NotificationMessage
+import com.marian.puskas.bigfilefinder.common.resources.ResourcesManager
 import com.marian.puskas.bigfilefinder.domain.searchresults.BigFilesSearchManager
 import com.marian.puskas.bigfilefinder.domain.searchresults.SearchResult
 import com.marian.puskas.bigfilefinder.ui.Parameters
@@ -21,7 +23,8 @@ import javax.inject.Inject
 class SearchResultsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val bigFileSearchManager: BigFilesSearchManager,
-    private val notificationProvider: NotificationProvider
+    private val notificationProvider: NotificationProvider,
+    private val resourcesManager: ResourcesManager
 ) : ViewModel() {
 
     private val _state: MutableState<FilesState> = mutableStateOf(FilesState.Loading(""))
@@ -52,9 +55,10 @@ class SearchResultsViewModel @Inject constructor(
     private fun sendNotification(searchResultsNumber: Int) {
         notificationProvider.sendNotification(
             NotificationMessage(
-            title = "Search completed",
-             description = "Found $searchResultsNumber results"
-        ))
+                title = resourcesManager.getString(R.string.search_notification_title),
+                description = resourcesManager.getString(R.string.search_notification_description, searchResultsNumber)
+            )
+        )
     }
 
     private fun File.toBigFile(): BigFile =
