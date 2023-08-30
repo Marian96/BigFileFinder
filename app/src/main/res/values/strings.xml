@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Big File Finder</string>
+    <string name="choose_directories">Choose directories</string>
+    <string name="search_files">Search files</string>
+    <string name="number_of_files">Number of files</string>
+    <string name="number_of_directories">Number of directories</string>
+    <string name="directories">Directories</string>
+    <string name="no_more_directories">No more directories</string>
+    <string name="ok">OK</string>
+    <string name="number_of_files_error">Please insert number of files</string>
+    <string name="selected_directories_error">No directories selected for search</string>
+    <string name="files">Files</string>
+    <string name="no_files_found">No files found</string>
+    <string name="searching_in">Searching in %1$s</string>
+</resources>
