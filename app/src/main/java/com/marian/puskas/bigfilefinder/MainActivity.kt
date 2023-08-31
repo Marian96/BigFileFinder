@@ -18,6 +18,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -57,20 +58,8 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     val navController = rememberNavController()
                     val numberOfFiles = rememberSaveable { mutableStateOf("") }
-                    val context = LocalContext.current
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                        ContextCompat.checkSelfPermission(context, POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
-                    ) {
-                       val launcher = rememberLauncherForActivityResult(
-                            contract = ActivityResultContracts.RequestPermission(),
-                            onResult = {
-                                if (!checkReadStoragePermission()) requestReadPermission()
-                            }
-                        )
-                        SideEffect {
-                            launcher.launch(POST_NOTIFICATIONS)
-                        }
-                    }
+
+                    InitialPermissionCheck()
                     NavHost(
                         navController = navController,
                         startDestination = Screen.MainScreen.route
@@ -93,12 +82,12 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(route = Screen.DirectoriesScreen.route) {
                             DirectoriesScreen {
-                                navController.navigate(Screen.MainScreen.route)
+                                navController.popBackStack()
                             }
                         }
                         composable(route = Screen.SearchResultsScreen.route + "/{number_of_files}") {
                             SearchResultsScreen(onBackButtonClick = {
-                                navController.navigate(Screen.MainScreen.route)
+                                navController.popBackStack()
                             })
                         }
                     }
@@ -146,7 +135,24 @@ class MainActivity : ComponentActivity() {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             Environment.isExternalStorageManager()
         } else {
-            ContextCompat.checkSelfPermission(applicationContext, READ_EXTERNAL_STORAGE)  == PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(applicationContext, READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+        }
+    }
+
+    @Composable
+    private fun InitialPermissionCheck() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission( LocalContext.current, POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+        ) {
+            val launcher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.RequestPermission(),
+                onResult = {
+                    if (!checkReadStoragePermission()) requestReadPermission()
+                }
+            )
+            SideEffect {
+                launcher.launch(POST_NOTIFICATIONS)
+            }
         }
     }
 }
